@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="19c5351e-f28b-4580-bb98-c532a9c90688" name="IFROCEAN" url="http://groupe_ifrocean_6.b1.latetedanslephp.fr">
+        <fileTransfer rootFolder="/home/groupe_ifrocean_6/public_html" accessType="SFTP" host="groupe_ifrocean_6.b1.latetedanslephp.fr" port="22" sshConfigId="81b6d2ce-16fc-4af3-b216-0adc5c954b7b" sshConfig="groupe_ifrocean_6@groupe_ifrocean_6.b1.latetedanslephp.fr:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

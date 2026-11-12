@@ -1,77 +1,71 @@
 <?php
-
 session_start();
 
+// Importer la configuration
 include_once "config.php";
 
-// 1 : Connexion à la BDD
-$db = new PDO(
-        'mysql:host='.Config::HOST.';dbname='.Config::DBNAME,
-        Config::USER,
-        Config::PASSWORD
-);
+// Vérifier si le formulaire a été envoyé
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-// 2 : Vérifier si le formulaire a été envoyé
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-    // 3 : Récupérer les informations du formulaire
     $login = filter_input(INPUT_POST, "login", FILTER_SANITIZE_SPECIAL_CHARS);
-    $mot_de_passe = $_POST['mot_de_passe'];
+    $mot_de_passe = $_POST["mot_de_passe"];
 
-    // 4 : Préparer la requête SQL
-    $req = $db->prepare('SELECT * FROM utilisateurs WHERE login = ?');
+    try {
+        // 1 : Connexion à la BDD
+        $db = new PDO(
+                'mysql:host='.Config::HOST.';dbname='.Config::DBNAME.';charset=utf8mb4',
+                Config::USER,
+                Config::PASSWORD
+        );
 
-    // 5 : Exécuter la requête
-    $req->execute([$login]);
+        // 2 : Préparer une requête SQL
+        $req = $db->prepare('SELECT * FROM utilisateurs WHERE login = ?');
 
-    // 6 : Récupérer l'utilisateur
-    $utilisateur = $req->fetch();
+        // 3 : Exécuter la requête
+        $req->execute([$login]);
 
-    // 7 : Vérifier le mot de passe
-    if ($utilisateur && password_verify($mot_de_passe, $utilisateur['mot_de_passe'])) {
+        // 4 : Récupérer le résultat
+        $utilisateur = $req->fetch();
 
-        session_regenerate_id(true);
+        // Vérifier le mot de passe
+        if ($utilisateur && password_verify($mot_de_passe, $utilisateur['mot_de_passe'])) {
 
-        $_SESSION['user'] = $utilisateur;
+            session_regenerate_id(true);
 
-        header('Location: dashboard.php');
-        exit();
+            $_SESSION['user'] = [
+                    'id' => $utilisateur['id'],
+                    'nom' => $utilisateur['nom'],
+                    'prenom' => $utilisateur['prenom'],
+                    'role' => $utilisateur['role']
+            ];
 
-    } else {
-        $erreur = "Identifiant ou mot de passe incorrect.";
+            header("Location: dashboard.php");
+            exit();
+
+        } else {
+            $erreur = "Identifiant ou mot de passe incorrect.";
+        }
+
+    } catch (PDOException $e) {
+        $erreur = $e->getMessage();
     }
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Connexion IFROCEAN</title>
-</head>
-<body>
-
 <h1>Connexion IFROCEAN</h1>
 
 <?php if (isset($erreur)) { ?>
-    <p><?= htmlspecialchars($erreur) ?></p>
+    <p><?php echo htmlspecialchars($erreur); ?></p>
 <?php } ?>
 
-<form method="POST" action="">
+<form method="POST" action="login.php">
 
     <label>Identifiant :</label>
     <input type="text" name="login" required>
 
-    <br><br>
-
     <label>Mot de passe :</label>
     <input type="password" name="mot_de_passe" required>
-
-    <br><br>
 
     <button type="submit">Se connecter</button>
 
 </form>
-
-</body>
-</html>

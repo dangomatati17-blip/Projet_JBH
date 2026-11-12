@@ -1,9 +1,8 @@
 <?php
-
 class Config
 {
     const HOST = "localhost";
-    const DBNAME = "ifrocean";
-    const USER = "root";
-    const PASSWORD = "";
+    const DBNAME = "groupe_ifrocean_6";
+    const USER = "groupe_ifrocean_6";
+    const PASSWORD = "v6E%oH%tjUB2";
 }
